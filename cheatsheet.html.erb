@@ -38,7 +38,7 @@ ol { margin-top:0; margin-bottom:0;}
 &nbsp;
 <b><a href=http://anyall.org/scalacheat/>anyall.org/scalacheat</a></b>
 by <a href=http://anyall.org/>brendan</a>
-<br>still pretty incomplete...
+<br>still pretty incomplete... and i'm still a scala newb...
 
 <table style="margin-top:5px" cellspacing=0>
 <!-- <tr>
@@ -51,7 +51,7 @@ by <a href=http://anyall.org/>brendan</a>
 <tr>
   <td><%=c"[good] def f(x: Int) = { x*x }"%><br>
       <%=c"[bad!] def f(x: Int)   { x*x }"%>
-  <td>define function <br>hidden error: forgetting the = causes sadness.
+  <td>define function <br>hidden error: without = it's a Unit-returning procedure; causes havoc
 <tr>
   <td><%=c"[good] def f(x: Unit) = println(x)"%><br>
       <%=c"[bad!] def f(x) = println(x)"%>
@@ -64,7 +64,7 @@ by <a href=http://anyall.org/>brendan</a>
 <tr>
   <td><%=c "def f(x: R)" %>  <%=cmp "vs"%><br>
       <%=c "def f(x: => R)" %>
-  <td>call-by-value <%=cmp "vs"%><br>call-by-name (lazier).
+  <td>call-by-value <%=cmp "vs"%><br>call-by-name (lazier)
 
 <tr>
   <td><%=c "(x:R) => x*x" %>
@@ -82,11 +82,11 @@ by <a href=http://anyall.org/>brendan</a>
   <td>anonymous function: can omit underscore only on rhs (TODO don't understand)
 <tr>
   <td><%=c"(1 to 5).map { val x=_*2; println(x); x }"%>
-  <td>anonymous function: block style
+  <td>anonymous function: block style returns last expression
     <!--     examples:  <a href=http://lampsvn.epfl.ch/svn-repos/scala/scala/trunk/src/library/scala/concurrent/ops.scala>scala.concurrency.ops</a>, <a href=http://lampsvn.epfl.ch/svn-repos/scala/scala/trunk/src/library/scala/util/control/Breaks.scala>scala.util.control.Breaks</a> -->
 <tr>
   <td><%=c"(1 to 5) filter {_%2 == 0} map {_*2}"%>
-  <td>anonymous functions: pipeline style.  (parens ok here)
+  <td>anonymous functions: pipeline style.  (or parens too)
 <tr>
   <td>
     <%=c"def compose(g:R=>R, h:R=>R) = (x:R) => g(h(x))"%><br>
@@ -145,8 +145,8 @@ by <a href=http://anyall.org/>brendan</a>
   <td><%=c"var (x,y,z) = (1,2,3)"%>
   <td>destructuring bind: tuple unpacking via pattern matching
 <tr>
-  <td><%=c"[bad!] var x,y,z = 1,2,3,\"wtf\""%>
-  <td>hidden error: each assigned to the entire tuple
+  <td><%=c"[bad!] var x,y,z = (1,2,3,\"wtf\")"%>
+  <td>hidden error: each assigned to the entire 4-tuple
 <tr>
   <td><%=c"var x = List(1,2,3)"%><br>
 
@@ -159,7 +159,7 @@ by <a href=http://anyall.org/>brendan</a>
   <td><%=c"1 to 5"%> <%=cmp "same as"%><br>
       <%=c"1 until 6"%>
   <td>range sugar
-<tr><td><%=c"( )"%> <td>TODO what is this thing?
+<tr><td><%=c"( )"%> <td>sole member of type Unit
   
   <%############################################################%>
   
@@ -174,7 +174,7 @@ by <a href=http://anyall.org/>brendan</a>
 </tr>
 <tr><td><%=c"var x = 0"%>
 <tr><td><%=c"while (x < 5) { println(x); x += 1}"%> <td>while loop
-<tr><td><%=c"do { println(x); x += 1} while (x < 5)"%> <td>do-while loop
+<tr><td><%=c"do { println(x); x += 1} while (x < 5)"%> <td>do while loop
 <tr><td><%=c(
 "import scala.util.control.Breaks._
 breakable { 
@@ -189,13 +189,13 @@ breakable {
   <td>
     <%=c"val xs = List.range(1,11)"%><br><%=c"val ys = List.range(1,11)"%>
 <tr><td>  
-    <%=c"for (x <- xs if x%2 == 0) yield x"%> <%=cmp "same as"%><br>
-    <%=c"xs.filter(_%2 == 0)"%>
-  <td>for comprehension: filter
+    <%=c"for (x <- xs if x%2 == 0) yield x*10"%> <%=cmp "same as"%><br>
+    <%=c"xs.filter(_%2 == 0).map(_*10)"%>
+  <td>for comprehension: filter/map
 <tr>
   <td>
     <%=c"for ((x,y) <- xs zip ys) yield x*y"%> <%=cmp "same as"%><br>
-    <%=c"(xs zip ys).map(xy => {val (x,y) = xy; x*y})"%>
+    <%=c"(xs zip ys) map { case (x,y) => x*y }"%>     
   <td>for comprehension: destructuring bind
 <tr>
   <td>
@@ -206,15 +206,15 @@ breakable {
   <td>
     <%=c(
 %|for (x <- xs; y <- ys) {
-    println("%d / %d = %.3f".format(x,y, x*1.0/y))    
+    println("%d/%d = %.3f".format(x,y, x*1.0/y))    
 }|)%>
-  <td>for comprehension: imperative-ish.
+  <td>for comprehension: imperative-ish
 <tr>
   <td>
+    <%=c"[good] (xs zip ys) map { case (x,y) => x*y }"%><br>
     <%=c"[bad!] (xs zip ys).map( (x,y) => x*y )"%>
-    <%=c"[bad!] (xs zip ys).map( ((x,y)) => x*y )"%>
-    <%=c"[bad!] (xs zip ys).map( ((x,y),) => x*y )"%>
-  <td>TODO how do you make destructuring bind would work for function args?
+  <td>
+    use <%=c"case"%> in function args for pattern matching
     
 </tr>
 
@@ -226,7 +226,7 @@ breakable {
   <td>define a class
 <tr>
   <td><%=c"new { ... }"%>
-  <td>anonymous class (TODO can't extend anything?)
+  <td>anonymous class (TODO extension syntax)
 <tr>
   <td><%=c"abstract class D { ... }"%>
   <td>define an abstract class. (non-createable)
@@ -258,7 +258,7 @@ breakable {
   <td>type error: abstract type
 <tr>
   <td><%=c"List(1,2,3)"%>
-  <td>works: customary style to shadow like this
+  <td>works: convention for callable factory shadowing the type
 <tr>
   <td><%=c"class C { class D }"%><br><%=c"C#D"%> <td>TODO doesn't work (should refer to inner class)
 <tr>
@@ -316,5 +316,5 @@ portions adapted from A. Sundararajan's java vs. scala cheat sheet:
 <a href=http://blogs.sun.com/sundararajan/entry/scala_for_java_programmers_part>(2)</a>
 <br>
 also check out: <a href=http://www.slideshare.net/Odersky/fosdem-2009-1013261>slides: fosdem-2009 (odersky)</a>, <a href=http://www.scala-lang.org/docu/files/ScalaByExample.pdf>book: scala by example (odersky)</a>
-<br>designed for scala 2.8
-<br>source at <a href=http://github.com/brendano/scalacheat>github/brendano/scalacheat</a>
+<br>designed for scala 2.8.
+ source at <a href=http://github.com/brendano/scalacheat>github.com/brendano/scalacheat</a>
