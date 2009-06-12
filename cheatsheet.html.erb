@@ -1,0 +1,296 @@
+<%
+def c(code, linkys={})
+  code.gsub!(" ","&nbsp;")
+  code.gsub!(/\b(def)&nbsp;/){"<span class='hl1'>#{$1}</span>&nbsp;"}
+  code.gsub!(/(\[bad.?\])/) { "<span class=bad>#{$1}</span>" }
+  code.gsub!(/(\[good.?\])/) { "<span class=good>#{$1}</span>" }
+  code.gsub!("\n","<br>")
+  linkys.each_pair do |text, link|
+    code.gsub!(text) { "<a href='#{link}'>" + text + "</a>" }
+  end
+  "<span class='cod'>" + code + "</span>"
+end
+def cmp(s)
+  " &nbsp; <i>#{s}</i>"
+end
+%>
+<head>
+<style>
+body { color: #292929;}
+.cod { color: #225; }
+.cod a { text-decoration: none }
+.cod a:hover { text-decoration: underline }
+td a { text-decoration: none;}
+td a:hover { text-decoration: underline;}
+.bad { font-size:80%; color: #522;}
+.good { font-size:80%; color: #252;}
+/*.hl1 { color: #248;}*/
+.subheader { padding-top:0.5em; font-weight: bold; }
+td { vertical-align: top; padding-left:4px; padding-right:2px;
+  border-width: 1px 0 0 0;
+  border-style: solid;
+  border-color: gray white gray white;}
+ol { margin-top:0; margin-bottom:0;}
+</style>
+<title>cheat sheet for scala syntax</title>
+<body>
+<b>Cheat sheet for scala syntax</b>
+&nbsp;
+<b><a href=http://anyall.org/scalacheat/>anyall.org/scalacheat</a></b>
+by <a href=http://anyall.org/>brendan</a>
+
+<table style="margin-top:5px" cellspacing=0>
+<!-- <tr>
+  <th>scala</th>
+  <th>explanation -->
+
+    <%############################################################%>
+
+<tr><td class=subheader colspan=2>functions
+<tr>
+  <td><%=c"[good] def f(x: Int) = { x*x }"%><br>
+      <%=c"[bad!] def f(x: Int)   { x*x }"%>
+  <td>define function <br>hidden error: forgetting the = causes sadness.
+<tr>
+  <td><%=c"[good] def f(x: Unit) = println(x)"%><br>
+      <%=c"[bad!] def f(x) = println(x)"%>
+  <td>define function <br>syntax error: need types for every arg.
+<tr>
+  <td><%=c"5.+(3); 5 + 3"%><br><%=c"(1 to 5) map (_*2)"%>
+  <td>infix sugar
+<tr>
+  <td><%=c"type R = Double"%> <td>type alias
+<tr>
+  <td><%=c "def f(x: R)" %>  <%=cmp "vs"%><br>
+      <%=c "def f(x: => R)" %>
+  <td>call-by-value <%=cmp "vs"%><br>call-by-name (lazier).
+
+<tr>
+  <td><%=c "(x:R) => x*x" %>
+  <td>anonymous function.
+<tr>
+  <td><%=c"(1 to 5).map( _ * 2 )"%><br>
+      <%=c"(1 to 5).reduceLeft( _ + _ )"%>
+  <td>anonymous function: underscore is positionally matched arg.
+<tr>
+  <td><%=c"(1 to 5).map( x => x*x )"%>
+  <td>anonymous function: to use an arg twice, have to name it.
+<tr>
+  <td><%=c"[good] (1 to 5).map(2*)"%><br>
+      <%=c"[bad!] (1 to 5).map(*2)"%>
+  <td>anonymous function: can omit underscore only on rhs (TODO don't understand)
+<tr>
+  <td><%=c"(1 to 5).map { val x=_*2; println(x); x }"%>
+  <td>anonymous function: block style.      examples:  <a href=http://lampsvn.epfl.ch/svn-repos/scala/scala/trunk/src/library/scala/concurrent/ops.scala>scala.concurrency.ops</a>, <a href=http://lampsvn.epfl.ch/svn-repos/scala/scala/trunk/src/library/scala/util/control/Breaks.scala>scala.util.control.Breaks</a>
+<tr>
+  <td>
+    <%=c"def compose(g:R=>R, h:R=>R) = (x:R) => g(h(x))"%><br>
+    <%=c"val f = compose({_*2}, {_-1})"%>
+  <td>anonymous function: need outer parens for more multiple blocks
+
+
+<tr>
+  <td><%=c"val zscore = (mean:R, sd:R) => (x:R) => (x-mean)/sd"%>
+  <td>currying, obvious syntax
+<tr>
+  <td><%=c"def zscore(mean:R, sd:R) = (x:R) => (x-mean)/sd"%>
+  <td>currying, obvious syntax
+<tr>
+  <td><%=c"def zscore(mean:R, sd:R)(x:R) = (x-mean)/sd"%>
+  <td>currying, sugar syntax.  but then:
+<tr>
+  <td><%=c"val normer = zscore(7, 0.4)_"%>
+  <td>need trailing underscore to get the partial.  TODO don't understand why
+<tr>
+  <td><%=c"def sum(args: Int*) = args.reduceLeft(_+_)"%>
+  <td>varargs
+
+<tr><td>TODO <td>default args
+<tr><td>TODO <td>named args
+
+<tr>
+  <td><%=c"def mapmake[T](g:T=>T)(seq: List[T]) = seq.map(g)"%>
+  <td>generic type
+
+    <%############################################################%>
+
+<tr><td class=subheader colspan=2>packages
+<tr>
+  <td><%=c"import scala.collection._"%>
+  <td>wildcard import
+<tr>
+  <td><%=c"import scala.collection.{Vector, Sequence}"%>
+  <td>selective import
+<tr>
+  <td><%=c"import scala.collection.{Vector => Vec28}"%>
+  <td>renaming import
+<tr>
+  <td><%=c"package pkg"%> <i>at start of file</i><br>
+      <%=c"package pkg { ... }"%>
+  <td>declare a package
+
+    <%############################################################%>
+
+<tr><td class=subheader colspan=2>data structures
+<tr>
+  <td><%=c"(1,2,3)"%>
+  <td>tuple literal (Tuple3)
+<tr>
+  <td><%=c"var (x,y,z) = (1,2,3)"%>
+  <td>destructuring bind: tuple unpacking via pattern matching
+<tr>
+  <td><%=c"[bad!] var x,y,z = 1,2,3,\"wtf\""%>
+  <td>hidden error: each assigned to the entire tuple
+<tr>
+  <td><%=c"var x = List(1,2,3)"%><br>
+
+  <td>list (immutable)
+<tr><td><%=c"x(2)"%> <td>paren indexing (<a href=http://www.slideshare.net/Odersky/fosdem-2009-1013261/28>slide 28</a>)
+<tr>
+  <td><%=c"1 :: List(2,3)"%>
+  <td>cons
+<tr>
+  <td><%=c"1 to 5"%><br>
+      <%=c"1 until 6"%>
+  <td>range sugar
+<tr><td><%=c"( )"%> <td>TODO what is this thing?
+  
+  <%############################################################%>
+  
+<tr><td class=subheader colspan=2>control constructs
+<tr>
+  <td><%=c"if (check) happy else sad"%>
+  <td>conditional
+</tr>
+<tr>
+  <td><%=c"if (check) happy"%> <%=cmp "same as"%><br><%=c"if (check) happy else ()"%>
+  <td>conditional sugar
+</tr>
+<tr><td><%=c"var x = 0"%>
+<tr><td><%=c"while (x < 5) { println(x); x += 1}"%> <td>while loop
+<tr><td><%=c"do { println(x); x += 1} while (x < 5)"%> <td>do-while loop
+<tr><td><%=c(
+"import scala.util.control.Breaks._
+breakable { 
+    for (x <- List(1,2,3,4)) {
+        if (x == 2) continue
+        if (x % 2 == 0) break
+    } 
+}",  "scala.util.control.Breaks._" => "http://lampsvn.epfl.ch/svn-repos/scala/scala/trunk/src/library/scala/util/control/Breaks.scala")%> <td>breaking isn't very functional-ish, but there's a library that adds it.  <a href="http://www.slideshare.net/Odersky/fosdem-2009-1013261/21">slide 21</a>
+  
+  TODO this example breaks on <%=c'continue'%>
+<tr>
+  <td>
+    <%=c"val xs = List.range(1,11)"%><br><%=c"val ys = List.range(1,11)"%>
+<tr><td>  
+    <%=c"for (x <- xs if x%2 == 0) yield x"%> <%=cmp "same as"%><br>
+    <%=c"xs.filter(_%2 == 0)"%>
+  <td>for-comprehension
+<tr>
+  <td>
+    <%=c"for ((x,y) <- xs zip ys) yield x*y"%> <%=cmp "same as"%><br>
+    <%=c"(xs zip ys).map(xy => {val (x,y) = xy; x*y})"%>
+    
+  <td>for-comprehension (dot product) <br>TODO is there a more concise map version?
+    
+</tr>
+
+    <%############################################################%>
+
+<tr><td class=subheader colspan=2>object orientation
+<tr>
+  <td><%=c"class C extends D { ... }"%>
+  <td>define a class
+<tr>
+  <td><%=c"new { ... }"%>
+  <td>anonymous class (TODO can't extend anything?)
+<tr>
+  <td><%=c"abstract class D { ... }"%>
+  <td>define an abstract class. (non-createable)
+<tr>
+  <td><%=c"object O extends D { ... }"%>
+  <td>define a singleton. (module-like)
+<tr>
+  <td><%=c"trait T { ... }"%><br>
+      <%=c"class C extends T { ... }"%><br>
+      <%=c"class C extends D with T { ... }"%>
+  <td>traits.<br>interfaces-with-implementation.  no constructor params.  <a href="http://www.scala-lang.org/node/117">mixin-able</a>.
+<tr>
+  <td>
+    <%=c"trait T1; trait T2"%><br>
+    <%=c"class C extends T1 with T2"%><br>
+    <%=c"class C extends D with T1 with T2"%>
+  <td>multiple traits
+<tr>
+  <td><%=c"class C(name: String) extends D { ... }"%>
+  <td>constructor params (inits via super)
+<tr>
+  <td><%=c"class C extends D { override def f = ...}"%>
+  <td>must declare method overrides
+<tr>
+  <td><%=c %{new java.io.File("f")}%>
+  <td>create object
+<tr>
+  <td><%=c"[bad!] new List[Int]"%>
+  <td>type error: abstract type
+<tr>
+  <td><%=c"List(1,2,3)"%>
+  <td>works: customary style to shadow like this
+<tr>
+  <td><%=c"class C { class D }"%><br><%=c"C#D"%> <td>TODO doesn't work (should refer to inner class)
+<tr>
+  <td>TODO
+  <td>self types
+
+<tr>
+  <td><%=c"classOf[String]"%> <td>class literal
+<tr>
+  <td><%=c"x.isInstanceOf[String]"%> <td>type check  (runtime)
+<tr>
+  <td><%=c"x.asInstanceOf[String]"%> <td>type cast   (runtime)
+
+    <%############################################################%>
+
+<tr><td class=subheader colspan=2>more
+
+<tr>
+  <td>implicit
+  <td>TODO conversions
+<tr>
+  <td>TODO
+  <td>pattern matching: match
+<tr>
+  <td>TODO
+  <td>pattern matching: case classes
+<tr>
+  <td>TODO
+  <td>try/catch
+<tr>
+  <td><%=c"<s>hi {name}</s>".gsub('<','&lt;').gsub('>','&gt;')%> <td>xml literal with expression interpolation
+<tr>
+  <td>TODO <%=c"Option"%>
+  <td>guarded type-safe nulls (like <a href="http://www.haskell.org/all_about_monads/html/maybemonad.html">Maybe</a> or 
+    <a href="http://andand.rubyforge.org/">andand</a>)
+
+
+    <%############################################################%>
+
+<tr>
+  <td colspan=2 class=subheader>advanced generics
+<tr><td>TODO tricky esoteric stuff
+
+</table>
+
+<hr>
+this cheat sheet's goals are:
+<ol>
+  <li>lookup: easily find particular scala syntax you come across, since google fails
+  <li>coverage: overview the breadth of scala language concepts/capabilities
+  <li>brevity
+</ol>
+portions adapted from A. Sundararajan's java vs. scala cheat sheet: 
+<a href=http://blogs.sun.com/sundararajan/entry/scala_for_java_programmers>(1)</a>
+<a href=http://blogs.sun.com/sundararajan/entry/scala_for_java_programmers_part>(2)</a>
+<br>
+also check out: <a href=http://www.slideshare.net/Odersky/fosdem-2009-1013261>slides: fosdem-2009 (odersky)</a>, <a href=http://www.scala-lang.org/docu/files/ScalaByExample.pdf>book: scala by example (odersky)</a>
+<br>designed for scala 2.8
