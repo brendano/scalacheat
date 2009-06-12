@@ -11,7 +11,7 @@ def c(code, linkys={})
   "<span class='cod'>" + code + "</span>"
 end
 def cmp(s)
-  " &nbsp; <i>#{s}</i>"
+  " &nbsp; <span style='font-size:90%'><i>#{s}</i></span>"
 end
 %>
 <head>
@@ -38,6 +38,7 @@ ol { margin-top:0; margin-bottom:0;}
 &nbsp;
 <b><a href=http://anyall.org/scalacheat/>anyall.org/scalacheat</a></b>
 by <a href=http://anyall.org/>brendan</a>
+<br>still pretty incomplete...
 
 <table style="margin-top:5px" cellspacing=0>
 <!-- <tr>
@@ -67,7 +68,7 @@ by <a href=http://anyall.org/>brendan</a>
 
 <tr>
   <td><%=c "(x:R) => x*x" %>
-  <td>anonymous function.
+  <td>anonymous function
 <tr>
   <td><%=c"(1 to 5).map( _ * 2 )"%><br>
       <%=c"(1 to 5).reduceLeft( _ + _ )"%>
@@ -81,14 +82,17 @@ by <a href=http://anyall.org/>brendan</a>
   <td>anonymous function: can omit underscore only on rhs (TODO don't understand)
 <tr>
   <td><%=c"(1 to 5).map { val x=_*2; println(x); x }"%>
-  <td>anonymous function: block style.      examples:  <a href=http://lampsvn.epfl.ch/svn-repos/scala/scala/trunk/src/library/scala/concurrent/ops.scala>scala.concurrency.ops</a>, <a href=http://lampsvn.epfl.ch/svn-repos/scala/scala/trunk/src/library/scala/util/control/Breaks.scala>scala.util.control.Breaks</a>
+  <td>anonymous function: block style
+    <!--     examples:  <a href=http://lampsvn.epfl.ch/svn-repos/scala/scala/trunk/src/library/scala/concurrent/ops.scala>scala.concurrency.ops</a>, <a href=http://lampsvn.epfl.ch/svn-repos/scala/scala/trunk/src/library/scala/util/control/Breaks.scala>scala.util.control.Breaks</a> -->
+<tr>
+  <td><%=c"(1 to 5) filter {_%2 == 0} map {_*2}"%>
+  <td>anonymous functions: pipeline style.  (parens ok here)
 <tr>
   <td>
     <%=c"def compose(g:R=>R, h:R=>R) = (x:R) => g(h(x))"%><br>
     <%=c"val f = compose({_*2}, {_-1})"%>
-  <td>anonymous function: need outer parens for more multiple blocks
-
-
+  <td>anonymous functions: to pass in multiple blocks, need outer parens
+    
 <tr>
   <td><%=c"val zscore = (mean:R, sd:R) => (x:R) => (x-mean)/sd"%>
   <td>currying, obvious syntax
@@ -101,6 +105,11 @@ by <a href=http://anyall.org/>brendan</a>
 <tr>
   <td><%=c"val normer = zscore(7, 0.4)_"%>
   <td>need trailing underscore to get the partial.  TODO don't understand why
+
+<tr>
+  <td><%=c"def mapmake[T](g:T=>T)(seq: List[T]) = seq.map(g)"%>
+  <td>generic type
+
 <tr>
   <td><%=c"def sum(args: Int*) = args.reduceLeft(_+_)"%>
   <td>varargs
@@ -108,9 +117,6 @@ by <a href=http://anyall.org/>brendan</a>
 <tr><td>TODO <td>default args
 <tr><td>TODO <td>named args
 
-<tr>
-  <td><%=c"def mapmake[T](g:T=>T)(seq: List[T]) = seq.map(g)"%>
-  <td>generic type
 
     <%############################################################%>
 
@@ -150,7 +156,7 @@ by <a href=http://anyall.org/>brendan</a>
   <td><%=c"1 :: List(2,3)"%>
   <td>cons
 <tr>
-  <td><%=c"1 to 5"%><br>
+  <td><%=c"1 to 5"%> <%=cmp "same as"%><br>
       <%=c"1 until 6"%>
   <td>range sugar
 <tr><td><%=c"( )"%> <td>TODO what is this thing?
@@ -185,13 +191,30 @@ breakable {
 <tr><td>  
     <%=c"for (x <- xs if x%2 == 0) yield x"%> <%=cmp "same as"%><br>
     <%=c"xs.filter(_%2 == 0)"%>
-  <td>for-comprehension
+  <td>for comprehension: filter
 <tr>
   <td>
     <%=c"for ((x,y) <- xs zip ys) yield x*y"%> <%=cmp "same as"%><br>
     <%=c"(xs zip ys).map(xy => {val (x,y) = xy; x*y})"%>
-    
-  <td>for-comprehension (dot product) <br>TODO is there a more concise map version?
+  <td>for comprehension: destructuring bind
+<tr>
+  <td>
+    <%=c"for (x<-xs; y<-ys) yield x*y"%> <%=cmp "same as"%>
+    <%=c"xs flatMap {x => ys map {y => x*y}}"%>
+  <td>for comprehension: cross product
+<tr>
+  <td>
+    <%=c(
+%|for (x <- xs; y <- ys) {
+    println("%d / %d = %.3f".format(x,y, x*1.0/y))    
+}|)%>
+  <td>for comprehension: imperative-ish.
+<tr>
+  <td>
+    <%=c"[bad!] (xs zip ys).map( (x,y) => x*y )"%>
+    <%=c"[bad!] (xs zip ys).map( ((x,y)) => x*y )"%>
+    <%=c"[bad!] (xs zip ys).map( ((x,y),) => x*y )"%>
+  <td>TODO how do you make destructuring bind would work for function args?
     
 </tr>
 
@@ -294,3 +317,4 @@ portions adapted from A. Sundararajan's java vs. scala cheat sheet:
 <br>
 also check out: <a href=http://www.slideshare.net/Odersky/fosdem-2009-1013261>slides: fosdem-2009 (odersky)</a>, <a href=http://www.scala-lang.org/docu/files/ScalaByExample.pdf>book: scala by example (odersky)</a>
 <br>designed for scala 2.8
+<br>source at <a href=http://github.com/brendano/scalacheat>github/brendano/scalacheat</a>
