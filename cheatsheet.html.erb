@@ -17,7 +17,7 @@ end
 <head>
 <style>
 body { color: #292929;}
-.cod { color: #225; }
+.cod { color: #116; }
 .cod a { text-decoration: none }
 .cod a:hover { text-decoration: underline }
 td a { text-decoration: none;}
@@ -38,7 +38,7 @@ ol { margin-top:0; margin-bottom:0;}
 &nbsp;
 <b><a href=http://anyall.org/scalacheat/>anyall.org/scalacheat</a></b>
 by <a href=http://anyall.org/>brendan</a>
-<br>still pretty incomplete... and i'm still a scala newb...
+<br>still pretty incomplete...
 
 <table style="margin-top:5px" cellspacing=0>
 <!-- <tr>
@@ -145,13 +145,13 @@ by <a href=http://anyall.org/>brendan</a>
   <td><%=c"var (x,y,z) = (1,2,3)"%>
   <td>destructuring bind: tuple unpacking via pattern matching
 <tr>
-  <td><%=c"[bad!] var x,y,z = (1,2,3,\"wtf\")"%>
-  <td>hidden error: each assigned to the entire 4-tuple
+  <td><%=c"[bad!] var x,y,z = (1,2,3)"%>
+  <td>hidden error: each assigned to the entire tuple
 <tr>
   <td><%=c"var x = List(1,2,3)"%><br>
 
   <td>list (immutable)
-<tr><td><%=c"x(2)"%> <td>paren indexing (<a href=http://www.slideshare.net/Odersky/fosdem-2009-1013261/28>slide 28</a>)
+<tr><td><%=c"x(2)"%> <td>paren indexing (<a href=http://www.slideshare.net/Odersky/fosdem-2009-1013261/27>slides</a>)
 <tr>
   <td><%=c"1 :: List(2,3)"%>
   <td>cons
@@ -159,7 +159,7 @@ by <a href=http://anyall.org/>brendan</a>
   <td><%=c"1 to 5"%> <%=cmp "same as"%><br>
       <%=c"1 until 6"%>
   <td>range sugar
-<tr><td><%=c"( )"%> <td>sole member of type Unit
+<tr><td><%=c"()"%> <%=cmp "(empty parens)"%> <td>sole member of the <%=c"Unit"%> type (void-like)
   
   <%############################################################%>
   
@@ -176,15 +176,15 @@ by <a href=http://anyall.org/>brendan</a>
 <tr><td><%=c"while (x < 5) { println(x); x += 1}"%> <td>while loop
 <tr><td><%=c"do { println(x); x += 1} while (x < 5)"%> <td>do while loop
 <tr><td><%=c(
-"import scala.util.control.Breaks._
-breakable { 
-    for (x <- List(1,2,3,4)) {
-        if (x == 2) continue
-        if (x % 2 == 0) break
+"breakable { 
+    for (x <- xs) {
+        if (r.nextFloat < 0.1) break
     } 
-}",  "scala.util.control.Breaks._" => "http://lampsvn.epfl.ch/svn-repos/scala/scala/trunk/src/library/scala/util/control/Breaks.scala")%> <td>breaking isn't very functional-ish, but there's a library that adds it.  <a href="http://www.slideshare.net/Odersky/fosdem-2009-1013261/21">slide 21</a>
-  
-  TODO this example breaks on <%=c'continue'%>
+}",  "scala.util.control.Breaks._" => "http://lampsvn.epfl.ch/svn-repos/scala/scala/trunk/src/library/scala/util/control/Breaks.scala")%> <td>get break from:<br><%=c(
+"import scala.util.control.Breaks._
+var r = new scala.util.Random")%><br>
+    (<a href="http://www.slideshare.net/Odersky/fosdem-2009-1013261/21">slides</a>)
+  <!-- TODO this example breaks on <%=c'continue'%> -->
 <tr>
   <td>
     <%=c"val xs = List.range(1,11)"%><br><%=c"val ys = List.range(1,11)"%>
@@ -199,24 +199,30 @@ breakable {
   <td>for comprehension: destructuring bind
 <tr>
   <td>
-    <%=c"for (x<-xs; y<-ys) yield x*y"%> <%=cmp "same as"%>
+    <%=c"for (x <- xs; y <- ys) yield x*y"%> <%=cmp "same as"%><br>
     <%=c"xs flatMap {x => ys map {y => x*y}}"%>
   <td>for comprehension: cross product
 <tr>
   <td>
     <%=c(
 %|for (x <- xs; y <- ys) {
-    println("%d/%d = %.3f".format(x,y, x*1.0/y))    
+    println("%d/%d = %.1f".format(x,y, x*y))    
 }|)%>
   <td>for comprehension: imperative-ish
+
+
+    <%############################################################%>
+
+<tr><td class=subheader colspan=2>pattern matching
+    
 <tr>
   <td>
     <%=c"[good] (xs zip ys) map { case (x,y) => x*y }"%><br>
     <%=c"[bad!] (xs zip ys).map( (x,y) => x*y )"%>
   <td>
     use <%=c"case"%> in function args for pattern matching
-    
 </tr>
+<tr><td> <td>TODO case classes, match...
 
     <%############################################################%>
 
@@ -254,11 +260,9 @@ breakable {
   <td><%=c %{new java.io.File("f")}%>
   <td>create object
 <tr>
-  <td><%=c"[bad!] new List[Int]"%>
-  <td>type error: abstract type
-<tr>
-  <td><%=c"List(1,2,3)"%>
-  <td>works: convention for callable factory shadowing the type
+  <td><%=c"[bad!] new List[Int]"%><br><%=c"[good] List(1,2,3)"%>
+  <td>type error: abstract type<br>
+      instead, a convention for callable factory shadowing the type
 <tr>
   <td><%=c"class C { class D }"%><br><%=c"C#D"%> <td>TODO doesn't work (should refer to inner class)
 <tr>
@@ -279,12 +283,6 @@ breakable {
 <tr>
   <td>implicit
   <td>TODO conversions
-<tr>
-  <td>TODO
-  <td>pattern matching: match
-<tr>
-  <td>TODO
-  <td>pattern matching: case classes
 <tr>
   <td>TODO
   <td>try/catch
