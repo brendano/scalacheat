@@ -156,8 +156,8 @@ by <a href=http://anyall.org/>brendan</a>
   <td><%=c"1 :: List(2,3)"%>
   <td>cons
 <tr>
-  <td><%=c"1 to 5"%> <%=cmp "same as"%><br>
-      <%=c"1 until 6"%>
+  <td><%=c"1 to 5"%> <%=cmp"same as"%> &nbsp; <%=c"1 until 6"%><br>
+      <%=c"1 to 10 by 2"%>
   <td>range sugar
 <tr><td><%=c"()"%> <%=cmp "(empty parens)"%> <td>sole member of the <%=c"Unit"%> type (void-like)
   
@@ -180,7 +180,7 @@ by <a href=http://anyall.org/>brendan</a>
     for (x <- xs) {
         if (r.nextFloat < 0.1) break
     } 
-}",  "scala.util.control.Breaks._" => "http://lampsvn.epfl.ch/svn-repos/scala/scala/trunk/src/library/scala/util/control/Breaks.scala")%> <td>get break from:<br><%=c(
+}",  "scala.util.control.Breaks._" => "http://lampsvn.epfl.ch/svn-repos/scala/scala/trunk/src/library/scala/util/control/Breaks.scala")%> <td>setup is:<br><%=c(
 "import scala.util.control.Breaks._
 var r = new scala.util.Random")%><br>
     (<a href="http://www.slideshare.net/Odersky/fosdem-2009-1013261/21">slides</a>)
@@ -218,7 +218,7 @@ var r = new scala.util.Random")%><br>
 <tr>
   <td>
     <%=c"[good] (xs zip ys) map { case (x,y) => x*y }"%><br>
-    <%=c"[bad!] (xs zip ys).map( (x,y) => x*y )"%>
+    <%=c"[bad!] (xs zip ys) map( (x,y) => x*y )"%>
   <td>
     use <%=c"case"%> in function args for pattern matching
 </tr>
@@ -316,7 +316,7 @@ portions adapted from A. Sundararajan's java vs. scala cheat sheet:
 also check out: <a href=http://www.slideshare.net/Odersky/fosdem-2009-1013261>slides: fosdem-2009 (odersky)</a>, <a href=http://www.scala-lang.org/docu/files/ScalaByExample.pdf>book: scala by example (odersky)</a>
 <br>designed for scala 2.8.
  source at <a href=http://github.com/brendano/scalacheat>github.com/brendano/scalacheat</a>
-<br>feedback welcome, either below or to brenocon@gmail.com
+<br>feedback welcome, either below or brenocon@gmail.com or @<a href=http://twitter.com/brendan642>brendan642</a>
  <hr>
  
  <div id="disqus_thread"></div><script type="text/javascript" src="http://disqus.com/forums/anyall/embed.js"></script><noscript><a href="http://anyall.disqus.com/?url=ref">View the discussion thread.</a></noscript><a href="http://disqus.com" class="dsq-brlink">blog comments powered by <span class="logo-disqus">Disqus</span></a>
