@@ -38,12 +38,29 @@ ol { margin-top:0; margin-bottom:0;}
 &nbsp;
 <b><a href=http://anyall.org/scalacheat/>anyall.org/scalacheat</a></b>
 by <a href=http://anyall.org/>brendan</a>
-<br>still pretty incomplete...
+<br>Most should work in the interactive interpreter.  Language coverage is still pretty incomplete.
 
 <table style="margin-top:5px" cellspacing=0>
 <!-- <tr>
   <th>scala</th>
   <th>explanation -->
+
+  <%############################################################%>
+
+<tr><td class=subheader colspan=2>variables
+<tr>
+  <td><%=c"var x = 5"%>
+  <td>variable
+</tr>
+<tr>
+  <td><%=c"val x = 5"%> <br><%=c"[bad!] x = 6"%>
+  <td>constant
+</tr>
+<tr>
+  <td><%=c"var x: Double = 5"%>
+  <td>explicit type
+</tr>
+
 
     <%############################################################%>
 
@@ -51,14 +68,11 @@ by <a href=http://anyall.org/>brendan</a>
 <tr>
   <td><%=c"[good] def f(x: Int) = { x*x }"%><br>
       <%=c"[bad!] def f(x: Int)   { x*x }"%>
-  <td>define function <br>hidden error: without = it's a Unit-returning procedure; causes havoc
+  <td>define function <br>hidden error: without = it's a <%=c"Unit"%>-returning procedure; causes havoc
 <tr>
   <td><%=c"[good] def f(x: Unit) = println(x)"%><br>
       <%=c"[bad!] def f(x) = println(x)"%>
   <td>define function <br>syntax error: need types for every arg.
-<tr>
-  <td><%=c"5.+(3); 5 + 3"%><br><%=c"(1 to 5) map (_*2)"%>
-  <td>infix sugar
 <tr>
   <td><%=c"type R = Double"%> <td>type alias
 <tr>
@@ -70,8 +84,8 @@ by <a href=http://anyall.org/>brendan</a>
   <td><%=c "(x:R) => x*x" %>
   <td>anonymous function
 <tr>
-  <td><%=c"(1 to 5).map( _ * 2 )"%><br>
-      <%=c"(1 to 5).reduceLeft( _ + _ )"%>
+  <td><%=c"(1 to 5).map( _*2 )"%><br>
+      <%=c"(1 to 5).reduceLeft( _+_ )"%>
   <td>anonymous function: underscore is positionally matched arg.
 <tr>
   <td><%=c"(1 to 5).map( x => x*x )"%>
@@ -79,7 +93,7 @@ by <a href=http://anyall.org/>brendan</a>
 <tr>
   <td><%=c"[good] (1 to 5).map(2*)"%><br>
       <%=c"[bad!] (1 to 5).map(*2)"%>
-  <td>anonymous function: can omit underscore only on rhs (TODO don't understand)
+  <td>anonymous function: crazy wack version. use <%=c"2*_"%> for sanity's sake instead.
 <tr>
   <td><%=c"(1 to 5).map { val x=_*2; println(x); x }"%>
   <td>anonymous function: block style returns last expression
@@ -104,11 +118,14 @@ by <a href=http://anyall.org/>brendan</a>
   <td>currying, sugar syntax.  but then:
 <tr>
   <td><%=c"val normer = zscore(7, 0.4)_"%>
-  <td>need trailing underscore to get the partial.  TODO don't understand why
+  <td>need trailing underscore to get the partial, only for the sugar version.
 
 <tr>
   <td><%=c"def mapmake[T](g:T=>T)(seq: List[T]) = seq.map(g)"%>
   <td>generic type
+<tr>
+  <td><%=c"5.+(3); 5 + 3"%><br><%=c"(1 to 5) map (_*2)"%>
+  <td>infix sugar
 
 <tr>
   <td><%=c"def sum(args: Int*) = args.reduceLeft(_+_)"%>
@@ -116,7 +133,6 @@ by <a href=http://anyall.org/>brendan</a>
 
 <tr><td>TODO <td>default args
 <tr><td>TODO <td>named args
-
 
     <%############################################################%>
 
@@ -148,10 +164,10 @@ by <a href=http://anyall.org/>brendan</a>
   <td><%=c"[bad!] var x,y,z = (1,2,3)"%>
   <td>hidden error: each assigned to the entire tuple
 <tr>
-  <td><%=c"var x = List(1,2,3)"%><br>
+  <td><%=c"var xs = List(1,2,3)"%><br>
 
   <td>list (immutable)
-<tr><td><%=c"x(2)"%> <td>paren indexing (<a href=http://www.slideshare.net/Odersky/fosdem-2009-1013261/27>slides</a>)
+<tr><td><%=c"xs(2)"%> <td>paren indexing (<a href=http://www.slideshare.net/Odersky/fosdem-2009-1013261/27>slides</a>)
 <tr>
   <td><%=c"1 :: List(2,3)"%>
   <td>cons
@@ -292,6 +308,8 @@ var r = new scala.util.Random")%><br>
   <td>TODO <%=c"Option"%>
   <td>guarded type-safe nulls (like <a href="http://www.haskell.org/all_about_monads/html/maybemonad.html">Maybe</a> or 
     <a href="http://andand.rubyforge.org/">andand</a>)
+<tr>
+  <td>TODO <td>unapply
 
 
     <%############################################################%>
