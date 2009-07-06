@@ -93,7 +93,7 @@ by <a href=http://anyall.org/>brendan</a>
 <tr>
   <td><%=c"[good] (1 to 5).map(2*)"%><br>
       <%=c"[bad!] (1 to 5).map(*2)"%>
-  <td>anonymous function: crazy wack version. use <%=c"2*_"%> for sanity's sake instead.
+  <td>anonymous function: bound infix method.  Use <%=c"2*_"%> for sanity's sake instead.
 <tr>
   <td><%=c"(1 to 5).map { val x=_*2; println(x); x }"%>
   <td>anonymous function: block style returns last expression
@@ -244,16 +244,22 @@ var r = new scala.util.Random")%><br>
 
 <tr><td class=subheader colspan=2>object orientation
 <tr>
-  <td><%=c"class C(x:R)"%> <%=cmp"same as"%><br><%=c"class C(private var x:R)"%><br><%=c"var c = new C(4)"%>
-  <td>constructor params - private members
-<tr>
-  <td><%=c"class C(var x:R)"%><br><%=c"var c = new C(4)"%><br><%=c"c.x"%>
-  <td>constructor params - public members
+  <td><%=c"class C(x: R)"%> <%=cmp"same as"%><br><%=c"class C(private var x: R)"%><br><%=c"var c = new C(4)"%>
+  <td>constructor params - private
 <tr>
   <td><%=c %|\
-class C(var x:R) {
+class C(var x: R)
+var c = new C(4)
+c.x
+c.x = 10
+| %>
+  <td>constructor params - public
+<tr>
+  <td><%=c %|\
+class C(var x: R) {
   assert(x > 0, "positive please")
   var y = x
+  val readonly = 5
   private var secret = 1
   def this = this(42)
 }|%>
@@ -261,6 +267,7 @@ class C(var x:R) {
     <br>
     constructor is class body<br>
     declare a public member<br>
+    declare a gettable but not settable member<br>
     declare a private member
     <br>
     alternative constructors
@@ -299,7 +306,7 @@ class C(var x:R) {
 <tr>
   <td><%=c"[bad!] new List[Int]"%><br><%=c"[good] List(1,2,3)"%>
   <td>type error: abstract type<br>
-      instead, a convention for callable factory shadowing the type
+      instead, convention: callable factory shadowing the type
 <!-- <tr>
   <td><%=c"class C { class D }"%><br><%=c"C#D"%> <td>TODO doesn't work (should refer to inner class) -->
 <tr>
