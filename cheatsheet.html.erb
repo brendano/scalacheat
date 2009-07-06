@@ -78,7 +78,7 @@ by <a href=http://anyall.org/>brendan</a>
 <tr>
   <td><%=c "def f(x: R)" %>  <%=cmp "vs"%><br>
       <%=c "def f(x: => R)" %>
-  <td>call-by-value <%=cmp "vs"%><br>call-by-name (lazier)
+  <td>call-by-value <%=cmp "vs"%><br>call-by-name (<a href=http://scala.sygneca.com/faqs/language#what-s-the-difference-between-a-lazy-argument-a-no-arg-function-argument-and-a-lazy-value>lazy parameters</a>)
 
 <tr>
   <td><%=c "(x:R) => x*x" %>
@@ -244,14 +244,35 @@ var r = new scala.util.Random")%><br>
 
 <tr><td class=subheader colspan=2>object orientation
 <tr>
-  <td><%=c"class C extends D { ... }"%>
-  <td>define a class
+  <td><%=c"class C(x:R)"%> <%=cmp"same as"%><br><%=c"class C(private var x:R)"%><br><%=c"var c = new C(4)"%>
+  <td>constructor params - private members
+<tr>
+  <td><%=c"class C(var x:R)"%><br><%=c"var c = new C(4)"%><br><%=c"c.x"%>
+  <td>constructor params - public members
+<tr>
+  <td><%=c %|\
+class C(var x:R) {
+  assert(x > 0, "positive please")
+  var y = x
+  private var secret = 1
+  def this = this(42)
+}|%>
+  <td>
+    <br>
+    constructor is class body<br>
+    declare a public member<br>
+    declare a private member
+    <br>
+    alternative constructors
 <tr>
   <td><%=c"new { ... }"%>
   <td>anonymous class (TODO extension syntax)
 <tr>
   <td><%=c"abstract class D { ... }"%>
   <td>define an abstract class. (non-createable)
+<tr>
+  <td><%=c"class C extends D { ... }"%>
+  <td>define an inherited class.
 <tr>
   <td><%=c"object O extends D { ... }"%>
   <td>define a singleton. (module-like)
@@ -273,7 +294,7 @@ var r = new scala.util.Random")%><br>
   <td><%=c"class C extends D { override def f = ...}"%>
   <td>must declare method overrides
 <tr>
-  <td><%=c %{new java.io.File("f")}%>
+  <td><%=c'new java.io.File("f")'%>
   <td>create object
 <tr>
   <td><%=c"[bad!] new List[Int]"%><br><%=c"[good] List(1,2,3)"%>
