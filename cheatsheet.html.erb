@@ -141,7 +141,9 @@ by <a href=http://anyall.org/>brendan</a>
   <td><%=c"import scala.collection._"%>
   <td>wildcard import
 <tr>
-  <td><%=c"import scala.collection.{Vector, Sequence}"%>
+  <td>
+    <%=c"import scala.collection.Vector"%><br>
+    <%=c"import scala.collection.{Vector, Sequence}"%>
   <td>selective import
 <tr>
   <td><%=c"import scala.collection.{Vector => Vec28}"%>
@@ -175,7 +177,7 @@ by <a href=http://anyall.org/>brendan</a>
   <td><%=c"1 to 5"%> <%=cmp"same as"%> &nbsp; <%=c"1 until 6"%><br>
       <%=c"1 to 10 by 2"%>
   <td>range sugar
-<tr><td><%=c"()"%> <%=cmp "(empty parens)"%> <td>sole member of the <%=c"Unit"%> type (void-like)
+<tr><td><%=c"()"%> <%=cmp "(empty parens)"%> <td>sole member of the <%=c"Unit"%> type (like C/Java void)
   
   <%############################################################%>
   
@@ -192,13 +194,12 @@ by <a href=http://anyall.org/>brendan</a>
 <tr><td><%=c"while (x < 5) { println(x); x += 1}"%> <td>while loop
 <tr><td><%=c"do { println(x); x += 1} while (x < 5)"%> <td>do while loop
 <tr><td><%=c(
-"breakable { 
-    for (x <- xs) {
-        if (r.nextFloat < 0.1) break
-    } 
-}",  "scala.util.control.Breaks._" => "http://lampsvn.epfl.ch/svn-repos/scala/scala/trunk/src/library/scala/util/control/Breaks.scala")%> <td>setup is:<br><%=c(
 "import scala.util.control.Breaks._
-var r = new scala.util.Random")%><br>
+breakable { 
+    for (x <- xs) {
+        if (Math.random < 0.1) break
+    } 
+}",  "scala.util.control.Breaks._" => "http://lampsvn.epfl.ch/svn-repos/scala/scala/trunk/src/library/scala/util/control/Breaks.scala")%> <td>break
     (<a href="http://www.slideshare.net/Odersky/fosdem-2009-1013261/21">slides</a>)
   <!-- TODO this example breaks on <%=c'continue'%> -->
 <tr>
@@ -223,8 +224,11 @@ var r = new scala.util.Random")%><br>
     <%=c(
 %|for (x <- xs; y <- ys) {
     println("%d/%d = %.1f".format(x,y, x*y))    
-}|)%>
-  <td>for comprehension: imperative-ish
+}|,  "format" => "http://java.sun.com/javase/6/docs/api/java/lang/String.html#format(java.lang.String,%20java.lang.Object...)")%>
+  <td>
+    for comprehension: imperative-ish<br>
+    <a href="http://java.sun.com/javase/6/docs/api/java/util/Formatter.html#syntax">sprintf-style</a>
+      
 
 
     <%############################################################%>
@@ -270,7 +274,7 @@ class C(var x: R) {
     declare a gettable but not settable member<br>
     declare a private member
     <br>
-    alternative constructors
+    alternative constructor
 <tr>
   <td><%=c"new { ... }"%>
   <td>anonymous class (TODO extension syntax)
@@ -280,6 +284,11 @@ class C(var x: R) {
 <tr>
   <td><%=c"class C extends D { ... }"%>
   <td>define an inherited class.
+<tr>
+  <td>
+    <%=c"class D(var x: R)"%><br>
+    <%=c"class C(x: R) extends D(x)"%>
+  <td>inheritance and constructor params.  (wishlist: automatically pass-up params by default)
 <tr>
   <td><%=c"object O extends D { ... }"%>
   <td>define a singleton. (module-like)
@@ -294,9 +303,6 @@ class C(var x: R) {
     <%=c"class C extends T1 with T2"%><br>
     <%=c"class C extends D with T1 with T2"%>
   <td>multiple traits
-<tr>
-  <td><%=c"class C(name: String) extends D { ... }"%>
-  <td>constructor params (inits via super)
 <tr>
   <td><%=c"class C extends D { override def f = ...}"%>
   <td>must declare method overrides
