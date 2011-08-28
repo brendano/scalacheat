@@ -135,8 +135,17 @@ pull requests welcome!
   <td><%=c"def sum(args: Int*) = args.reduceLeft(_+_)"%>
   <td>varargs
 
-<tr><td>TODO <td>default args
-<tr><td>TODO <td>named args
+<tr>
+  <td>
+    <%=c"def foo(bar: Int = 42, baz: Int = 7) = { ... }"%><br>
+    <%=c"foo()"%><br>
+    <%=c"foo(baz = 13)"%>
+  <td>default args
+<tr>
+  <td>
+    <%=c"def foo(bar: Int, baz: Int) = { ... }"%><br>
+    <%=c"foo(bar = 42, baz = 13)"%>
+  <td>named args
 
     <%############################################################%>
 
